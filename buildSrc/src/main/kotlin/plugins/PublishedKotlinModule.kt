@@ -3,10 +3,8 @@ package plugins
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenResolver
-
 import org.gradle.api.plugins.MavenRepositoryHandlerConvention
 import org.gradle.api.publication.maven.internal.deployer.MavenRemoteRepository
 import org.gradle.api.tasks.Upload
@@ -104,8 +102,11 @@ open class PublishedKotlinModule : Plugin<Project> {
                                     && InvokerHelper.getMetaClass(it).getProperty(it, "artifactId") == "kotlin-stdlib"
                         }
                         ?.also {
-                            InvokerHelper.getMetaClass(it).setProperty(it, "exclusions", emptyList<Any>())
-                            logger.warn("WARNING! Removed exclusions from kotlin-stdlib dependency of ${this.artifactId} artifact's maven metadata, check kotlin-stdlib dependency of ${project.path} project")
+                            val exclusions = InvokerHelper.getMetaClass(it).getProperty(it, "exclusions") as List<*>
+                            if (exclusions.isNotEmpty()) {
+                                InvokerHelper.getMetaClass(it).setProperty(it, "exclusions", emptyList<Any>())
+                                logger.warn("WARNING! Removed exclusions from kotlin-stdlib dependency of ${this.artifactId} artifact's maven metadata, check kotlin-stdlib dependency of ${project.path} project")
+                            }
                         }
                 }
             }
