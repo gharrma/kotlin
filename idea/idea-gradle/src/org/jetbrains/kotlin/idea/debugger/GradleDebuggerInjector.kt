@@ -9,8 +9,8 @@ import com.intellij.openapi.extensions.ExtensionPointName
 
 interface GradleDebuggerInjector {
     fun taskType(): String
-    fun codeToInjectBefore(): List<String> = emptyList()
-    fun codeToInjectAfter(): List<String> = emptyList()
+    fun codeToInjectBefore(callbackPortName: String): List<String> = emptyList()
+    fun codeToInjectAfter(callbackPortName: String): List<String> = emptyList()
 
     companion object {
         val EP_NAME = ExtensionPointName<GradleDebuggerInjector>("org.jetbrains.kotlin.gradleDebuggerInjector")

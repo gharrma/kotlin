@@ -807,16 +807,17 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmParametersSetup: String?, initScriptConsumer: Consumer<String>) {
         val lines = ArrayList<String>()
+        val callbackPortName = "callbackPort"
 
         val esRtJarPath: String? = PathUtil.getCanonicalPath(PathManager.getJarPathForClass(ExternalSystemSourceType::class.java))
         lines.add("initscript { dependencies { classpath files(\"$esRtJarPath\") } }") // bring external-system-rt.jar
         lines.add("import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper")
-        lines.add("if (System.getProperty(ForkedDebuggerHelper.GRADLE_DEBUG_PORT_PROPERTY) != null) {")
-        lines.add("  def callbackPort = System.getProperty(ForkedDebuggerHelper.GRADLE_DEBUG_PORT_PROPERTY) as Integer")
+        lines.add("if (ForkedDebuggerHelper.callbackPort().isInteger()) {")
+        lines.add("  def $callbackPortName = ForkedDebuggerHelper.callbackPort() as Integer")
         lines.add("  gradle.taskGraph.beforeTask { Task task ->")
         GradleDebuggerInjector.EP_NAME.extensionList.forEach { injector ->
             lines.add("    if (task instanceof ${injector.taskType()}) {")
-            injector.codeToInjectBefore().forEach { lines.add("      $it") }
+            injector.codeToInjectBefore(callbackPortName).forEach { lines.add("      $it") }
             lines.add("    }")
         }
         lines.add("  }\n")
