@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_NOT_IMPORTED_COMMON_SOURCE_SETS_SETTING
+import org.jetbrains.kotlin.idea.debugger.GradleDebuggerInjector
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
@@ -805,37 +806,45 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
     }
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmParametersSetup: String?, initScriptConsumer: Consumer<String>) {
-        super.enhanceTaskProcessing(taskNames, jvmParametersSetup, initScriptConsumer)
-        // external-system-rt.jar
-        val esRtJarPath: String? = PathUtil.getCanonicalPath(PathManager.getJarPathForClass(ExternalSystemSourceType::class.java))
-        val script = """ 
-        initscript {
-            dependencies {
-                classpath files("$esRtJarPath")
-            }
-        }
-        gradle.taskGraph.beforeTask { Task task ->
-            if (task instanceof Exec) {
-                // task.executable = "/home/kishmakov/Repos/kotlin/dist/artifacts/ideaUltimatePlugin/Kotlin/bin/linux/LLDBFrontend"
-                // task.executable = "/home/kishmakov/.konan/dependencies/lldb-1-linux/bin/LLDBFrontend"
-                // task.executable = "/Users/kirill.shmakov/Repos/my-examples/my-mpp-basic/build/bin/m1/e1DebugExecutable/e1.kexe"
-                task.executable = "/Users/kirill.shmakov/Repos/kotlin/dist/artifacts/ideaUltimatePlugin/Kotlin/bin/macos/LLDBFrontend"
-                
-                // task.args = ["55111"] 
-                // task.args = ["1", "2"]
-                task.args = ["--version"]
-                // task.args = [com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.version()]                
-                
-                task.environment = ["DYLD_FRAMEWORK_PATH": "/Users/kirill.shmakov/.konan/dependencies/lldb-1-macos", "aba": "abacaba"]
-                // task.environment = ["LD_PRELOAD": "/home/kishmakov/.konan/dependencies/lldb-1-linux/lib/liblldb.so"]
-            }
-        }
-        
-        def debugProperty = com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.GRADLE_DEBUG_PORT_PROPERTY        
-        println(System.getProperty(debugProperty))
-        println(System.getProperty('java.class.path'))""".trimIndent()
+        val lines = ArrayList<String>()
 
-        initScriptConsumer.consume(script)
+        val esRtJarPath: String? = PathUtil.getCanonicalPath(PathManager.getJarPathForClass(ExternalSystemSourceType::class.java))
+        lines.add("initscript { dependencies { classpath files(\"$esRtJarPath\") } }") // bring external-system-rt.jar
+        lines.add("import com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper")
+        lines.add("if (System.getProperty(ForkedDebuggerHelper.GRADLE_DEBUG_PORT_PROPERTY) != null) {")
+        lines.add("  def callbackPort = System.getProperty(ForkedDebuggerHelper.GRADLE_DEBUG_PORT_PROPERTY) as Integer")
+        lines.add("  gradle.taskGraph.beforeTask { Task task ->")
+        GradleDebuggerInjector.EP_NAME.extensionList.forEach { injector ->
+            lines.add("    if (task instanceof ${injector.taskType()}) {")
+            injector.codeToInjectBefore().forEach { lines.add("      $it") }
+            lines.add("    }")
+        }
+        lines.add("  }\n")
+        lines.add("}")
+
+//        val script = """
+//        gradle.taskGraph.beforeTask { Task task ->
+//            if (task instanceof Exec) {
+//                // task.executable = "/home/kishmakov/Repos/kotlin/dist/artifacts/ideaUltimatePlugin/Kotlin/bin/linux/LLDBFrontend"
+//                // task.executable = "/home/kishmakov/.konan/dependencies/lldb-1-linux/bin/LLDBFrontend"
+//                // task.executable = "/Users/kirill.shmakov/Repos/my-examples/my-mpp-basic/build/bin/m1/e1DebugExecutable/e1.kexe"
+//                task.executable = "/Users/kirill.shmakov/Repos/kotlin/dist/artifacts/ideaUltimatePlugin/Kotlin/bin/macos/LLDBFrontend"
+//
+//                // task.args = ["55111"]
+//                // task.args = ["1", "2"]
+//                task.args = ["--version"]
+//                // task.args = [com.intellij.openapi.externalSystem.rt.execution.ForkedDebuggerHelper.version()]
+//
+//                task.environment = ["DYLD_FRAMEWORK_PATH": "/Users/kirill.shmakov/.konan/dependencies/lldb-1-macos", "aba": "abacaba"]
+//                // task.environment = ["LD_PRELOAD": "/home/kishmakov/.konan/dependencies/lldb-1-linux/lib/liblldb.so"]
+//            }
+//        }
+//
+//        def debugProperty =
+//        println(System.getProperty(debugProperty))
+//        println(System.getProperty('java.class.path'))""".trimIndent()
+
+        initScriptConsumer.consume(lines.joinToString("\n"))
         println(">>> tasks are " + taskNames.joinToString())
     }
 }
