@@ -3,14 +3,18 @@ package plugins
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer.TEST
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenResolver
+import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.plugins.MavenRepositoryHandlerConvention
+import org.gradle.api.publication.maven.internal.MavenFactory
 import org.gradle.api.publication.maven.internal.deployer.MavenRemoteRepository
 import org.gradle.api.tasks.Upload
 import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.Sign
 import org.gradle.plugins.signing.SigningExtension
+import javax.inject.Inject
 import kotlin.properties.Delegates
 
 
@@ -18,7 +22,7 @@ import kotlin.properties.Delegates
  * Configures a Kotlin module for publication.
  *
  */
-open class PublishedKotlinModule : Plugin<Project> {
+open class PublishedKotlinModule @Inject constructor(private val mavenFactory: MavenFactory) : Plugin<Project> {
 
     private fun String.toBooleanOrNull() = listOf(true, false).firstOrNull { it.toString().equals(this, ignoreCase = true) }
 
@@ -27,6 +31,11 @@ open class PublishedKotlinModule : Plugin<Project> {
         project.run {
 
             plugins.apply("maven")
+
+            convention.getPlugin(MavenPluginConvention::class.java)?.also { mavenPluginConvention ->
+                val mappings = mavenPluginConvention.conf2ScopeMappings.mappings.filter { (_, mapping) -> mapping.scope != TEST }
+                mavenPluginConvention.conf2ScopeMappings = mavenFactory.createConf2ScopeMappingContainer(mappings)
+            }
 
             if (!project.hasProperty("prebuiltJar")) {
                 plugins.apply("signing")
@@ -80,10 +89,6 @@ open class PublishedKotlinModule : Plugin<Project> {
                     }
                 }
                 pom.whenConfigured {
-                    dependencies.removeIf {
-                        InvokerHelper.getMetaClass(it).getProperty(it, "scope") == "test"
-                    }
-
                     val builtinsRemoved = dependencies.removeIf {
                         InvokerHelper.getMetaClass(it).getProperty(it, "groupId") == "org.jetbrains.kotlin"
                                 && InvokerHelper.getMetaClass(it).getProperty(it, "artifactId") == "builtins"
