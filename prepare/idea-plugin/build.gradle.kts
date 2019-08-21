@@ -176,3 +176,36 @@ tasks.register<Sync>("ideaPlugin") {
     rename(quote("-$version"), "")
     rename(quote("-$bootstrapKotlinVersion"), "")
 }
+
+tasks.register<Jar>("ideaPluginSources") {
+    destinationDirectory.set(ideaPluginDir.parentFile)
+    archiveFileName.set("kotlin-plugin-sources.jar")
+    includeEmptyDirs = false
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    include("**/*.java", "**/*.kt")
+
+    val projectNames = mutableListOf<String>()
+    projectNames += projectsToShadow
+    projectNames += libraryProjects
+    projectNames += listOf(
+        ":idea:kotlin-gradle-tooling",
+        ":sam-with-receiver-ide-plugin",
+        ":plugins:kapt3-idea",
+        ":plugins:android-extensions-ide",
+        ":noarg-ide-plugin",
+        ":allopen-ide-plugin",
+        ":kotlin-jps-plugin"
+    )
+
+    for (projectName in projectNames) {
+        try {
+            from(project(projectName).mainSourceSet.allSource)
+        } catch (e: UnknownDomainObjectException) {
+            // This can happen if a given project does not have the Java plugin applied.
+            // Currently this happens for the :idea:jvm-debugger projects.
+            // Unfortunately I'm not sure how to collect the Kotlin sources in this case.
+            // Calling `project.plugins.findPlugin("kotlin")` returns null, and
+            // calling `project.the<KotlinProjectExtension>()` fails too.
+        }
+    }
+}
