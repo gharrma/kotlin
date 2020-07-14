@@ -503,7 +503,8 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        private fun createApplicationEnvironment(
+        // made public for Android Lint
+        fun createApplicationEnvironment(
             parentDisposable: Disposable, configuration: CompilerConfiguration, unitTestMode: Boolean
         ): KotlinCoreApplicationEnvironment {
             val applicationEnvironment = KotlinCoreApplicationEnvironment.create(parentDisposable, unitTestMode)
@@ -562,7 +563,8 @@ class KotlinCoreEnvironment private constructor(
             CandidateInterceptor.registerExtensionPoint(project)
         }
 
-        internal fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
+        // made public for Android Lint
+        fun registerExtensionsFromPlugins(project: MockProject, configuration: CompilerConfiguration) {
             val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
             for (registrar in configuration.getList(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)) {
                 try {
@@ -628,7 +630,8 @@ class KotlinCoreEnvironment private constructor(
             }
         }
 
-        private fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
+        // made public for Android Lint
+        fun registerProjectServicesForCLI(@Suppress("UNUSED_PARAMETER") projectEnvironment: JavaCoreProjectEnvironment) {
             /**
              * Note that Kapt may restart code analysis process, and CLI services should be aware of that.
              * Use PsiManager.getModificationTracker() to ensure that all the data you cached is still valid.

@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.kotlin.declarations
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.psi.*
@@ -179,6 +180,11 @@ class KotlinUMethodWithFakeLightDelegate internal constructor(
     }
 
     override fun hashCode(): Int = original.hashCode()
+
+    // Needed by metalava
+    override fun getTextRange(): TextRange {
+        return original.textRange
+    }
 }
 
 internal fun wrapExpressionBody(function: UElement, bodyExpression: KtExpression): UExpression? = when (bodyExpression) {

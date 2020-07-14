@@ -20,9 +20,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiTypeParameterListOwner
 import com.intellij.psi.ResolveState
+import com.intellij.psi.impl.light.LightTypeParameterBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.psi.KtTypeParameter
 
 class KotlinLightTypeParameterListBuilder(private val owner: PsiTypeParameterListOwner) :
     LightTypeParameterListBuilder(owner.manager, KotlinLanguage.INSTANCE) {
@@ -40,3 +42,8 @@ class KotlinLightTypeParameterListBuilder(private val owner: PsiTypeParameterLis
 
     override fun getText(): String? = ""
 }
+
+open class KotlinLightTypeParameterBuilder(
+    name: String, owner: PsiTypeParameterListOwner, index: Int,
+    val sourcePsi: KtTypeParameter
+) : LightTypeParameterBuilder(name, owner, index)

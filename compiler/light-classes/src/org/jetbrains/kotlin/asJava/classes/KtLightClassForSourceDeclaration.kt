@@ -275,7 +275,12 @@ abstract class KtLightClassForSourceDeclaration(
         }
 
         val thisDescriptor = getDescriptor()
-        return qualifiedName != null && thisDescriptor != null && checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
+        // https://youtrack.jetbrains.com/issue/KT-37210
+        return if (qualifiedName == null || thisDescriptor == null) {
+            super.isInheritor(baseClass, checkDeep)
+        } else {
+            checkSuperTypeByFQName(thisDescriptor, qualifiedName, checkDeep)
+        }
     }
 
     @Throws(IncorrectOperationException::class)

@@ -146,7 +146,23 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
             return false
         }
 
-        return this.psi == other.psi
+        // https://youtrack.jetbrains.com/issue/KT-22133
+        if (this.psi == other.psi) {
+            if (this.psi == null) {
+                // Two UElements can be different but both have null PSI fields; in that case,
+                // do a deeper check
+                if (this === other) { // same instance: always equal
+                    return true
+                }
+                if (this.javaClass !== other.javaClass) { // different types: never equal
+                    return false
+                }
+                return this.asSourceString() == other.asSourceString() // source code equality
+            }
+            return true
+        } else {
+            return false
+        }
     }
 
     override fun hashCode() = psi?.hashCode() ?: 0
