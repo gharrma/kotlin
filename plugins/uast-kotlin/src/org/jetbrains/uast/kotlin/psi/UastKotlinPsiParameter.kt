@@ -54,7 +54,9 @@ open class UastKotlinPsiParameterBase<T : KtElement>(
     val ktOrigin: T,
     language: Language = ktOrigin.language,
     isVarArgs: Boolean = false,
-    val ktDefaultValue: KtExpression? = null,
+    // Diff: Removed trailing comma from fix for KT-37613 backported
+    // from 1.4 branch:
+    val ktDefaultValue: KtExpression? = null
 ) : LightParameter(name, type, parent, language, isVarArgs) {
 
     override fun getParent(): PsiElement = parent
