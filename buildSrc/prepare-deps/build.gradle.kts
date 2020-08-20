@@ -187,6 +187,7 @@ val mergeSources by tasks.creating(Jar::class.java) {
     archiveBaseName.set("intellij")
     archiveClassifier.set("sources")
     archiveVersion.set(intellijVersion)
+    isZip64 = true
 }
 
 val sourcesFile = mergeSources.outputs.files.singleFile
