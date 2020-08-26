@@ -364,7 +364,9 @@ class KotlinCoreEnvironment private constructor(
             is JvmModulePathRoot ->
                 if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Java module root")
             is JavaSourceRoot ->
-                if (root.file.isFile) findJarRoot(root.file) else findExistingRoot(root, "Java source root")
+                // Partial cherry pick of https://github.com/JetBrains/kotlin/pull/3649 supporting .srcjar roots.
+                if (root.file.isFile && root.file.path.endsWith(".srcjar")) findJarRoot(root.file)
+                else findExistingRoot(root, "Java source root")
             else ->
                 throw IllegalStateException("Unexpected root: $root")
         }
