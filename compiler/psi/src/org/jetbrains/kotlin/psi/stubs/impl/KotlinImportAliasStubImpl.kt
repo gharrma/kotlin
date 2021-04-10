@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
-import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.psi.KtImportAlias
@@ -24,7 +23,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinImportAliasStubImpl(
-    parent: StubElement<PsiElement>?,
+    parent: StubElement<*>?,
     private val name: StringRef?
 ) : KotlinStubBaseImpl<KtImportAlias>(parent, KtStubElementTypes.IMPORT_ALIAS), KotlinImportAliasStub {
     override fun getName(): String? = StringRef.toString(name)
