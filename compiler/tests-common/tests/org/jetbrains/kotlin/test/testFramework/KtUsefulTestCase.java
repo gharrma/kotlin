@@ -502,7 +502,7 @@ public abstract class KtUsefulTestCase extends TestCase {
     /**
      * If you want a more shorter name than runInEdtAndWait.
      */
-    protected void edt(@NotNull ThrowableRunnable<Throwable> runnable) {
+    protected void edt(@NotNull ThrowableRunnable<Throwable> runnable) throws Throwable {
         EdtTestUtil.runInEdtAndWait(runnable);
     }
 
@@ -1145,7 +1145,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         return UIUtil.invokeAndWaitIfNeeded(() -> LocalFileSystem.getInstance().refreshAndFindFileByIoFile(file));
     }
 
-    public static void waitForAppLeakingThreads(long timeout, @NotNull TimeUnit timeUnit) {
+    public static void waitForAppLeakingThreads(long timeout, @NotNull TimeUnit timeUnit) throws Exception {
         EdtTestUtil.runInEdtAndWait(() -> {
             Application app = ApplicationManager.getApplication();
             if (app != null && !app.isDisposed()) {
