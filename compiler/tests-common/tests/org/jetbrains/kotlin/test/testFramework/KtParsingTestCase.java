@@ -101,12 +101,12 @@ public abstract class KtParsingTestCase extends KtPlatformLiteFixture {
         MutablePicoContainer appContainer = getApplication().getPicoContainer();
         final MockEditorFactory editorFactory = new MockEditorFactory();
         MockFileTypeManager mockFileTypeManager = new MockFileTypeManager(KotlinFileType.INSTANCE);
-        MockFileDocumentManagerImpl mockFileDocumentManager = new MockFileDocumentManagerImpl(new Function<CharSequence, Document>() {
+        MockFileDocumentManagerImpl mockFileDocumentManager = new MockFileDocumentManagerImpl(HARD_REF_TO_DOCUMENT_KEY, new Function<CharSequence, Document>() {
             @Override
             public Document fun(CharSequence charSequence) {
                 return editorFactory.createDocument(charSequence);
             }
-        }, HARD_REF_TO_DOCUMENT_KEY);
+        });
 
         registerApplicationService(PropertiesComponent.class, new AppPropertiesComponentImpl());
         registerApplicationService(PsiBuilderFactory.class, new PsiBuilderFactoryImpl());
