@@ -38,7 +38,7 @@ dependencies {
 
     testCompile(project(":kotlin-script-runtime"))
     testCompile(project(":kotlin-test:kotlin-test-jvm"))
-    
+
     testCompile(kotlinStdlib())
 
     testCompile(commonDep("junit:junit"))
@@ -90,7 +90,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         tasks.withType<KotlinCompile<*>> {
             if (path !in tasksWithWarnings) {
                 kotlinOptions {
-                    allWarningsAsErrors = true
+                    allWarningsAsErrors = false // TODO
                 }
             }
         }
