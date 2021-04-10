@@ -203,7 +203,7 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 extra["IntellijCoreDependencies"] =
     listOf(
         when {
-            Platform[202].orHigher() -> "asm-all-8.0.1"
+            Platform[202].orHigher() -> "asm-all-9.0"
             else -> "asm-all-7.0.1"
         },
         "guava",
