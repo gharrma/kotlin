@@ -105,7 +105,7 @@ fun ModuleDependency.includeJars(vararg names: String, rootProject: Project? = n
         if (rootProject != null && rootProject.extra.has("ignore.jar.$baseName")) {
             return@forEach
         }
-        if (rootProject != null && rootProject.extra.has("versions.jar.$baseName")) {
+        if (rootProject != null && !(name == "ideaIC" && baseName == "guava") && rootProject.extra.has("versions.jar.$baseName")) {
             baseName += "-${rootProject.extra["versions.jar.$baseName"]}"
         }
         artifact {
