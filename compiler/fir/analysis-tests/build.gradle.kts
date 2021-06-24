@@ -56,7 +56,7 @@ dependencies {
         testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.3.1-1") }
     }
     Platform[203].orHigher {
-        testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.4.1-4") }
+        testRuntimeOnly(intellijDep()) { includeJars("intellij-deps-fastutil-8.5.2-6") }
     }
     testRuntimeOnly(toolsJar())
 }

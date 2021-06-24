@@ -211,6 +211,7 @@ extra["intellijSeparateSdks"] = intellijSeparateSdks
 extra["IntellijCoreDependencies"] =
     listOf(
         when {
+            Platform[211].orHigher() -> "asm-all-9.1"
             Platform[202].orHigher() -> "asm-all-9.0"
             else -> "asm-all-7.0.1"
         },
