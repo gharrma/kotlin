@@ -73,7 +73,7 @@ class CachingLazyStorage<K, V>(
     }
 
     override fun append(key: K, value: V) {
-        getStorageOrCreateNew().appendData(key, { valueExternalizer.save(it, value) })
+        getStorageOrCreateNew().appendData(key, PersistentHashMap.ValueDataAppender { valueExternalizer.save(it, value) })
     }
 
     @Synchronized

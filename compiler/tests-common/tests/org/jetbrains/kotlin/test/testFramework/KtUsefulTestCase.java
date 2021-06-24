@@ -329,8 +329,8 @@ public abstract class KtUsefulTestCase extends TestCase {
         final CodeInsightSettings settings = CodeInsightSettings.getInstance();
         // don't use method references here to make stack trace reading easier
         //noinspection Convert2MethodRef
-        new RunAll()
-                .append(() -> {
+        new RunAll(
+                () -> {
                     try {
                         checkCodeInsightSettingsEqual(defaultSettings, settings);
                     }
@@ -345,8 +345,8 @@ public abstract class KtUsefulTestCase extends TestCase {
                         }
                         throw error;
                     }
-                })
-                .append(() -> {
+                },
+                () -> {
                     currentCodeStyleSettings.getIndentOptions(JavaFileType.INSTANCE);
                     try {
                         checkCodeStyleSettingsEqual(oldCodeStyleSettings, currentCodeStyleSettings);
@@ -354,8 +354,8 @@ public abstract class KtUsefulTestCase extends TestCase {
                     finally {
                         currentCodeStyleSettings.clearCodeStyleSettings();
                     }
-                })
-                .run();
+                }
+        ).run();
     }
 
     @NotNull

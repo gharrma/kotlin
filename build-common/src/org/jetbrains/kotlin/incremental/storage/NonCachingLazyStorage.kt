@@ -70,7 +70,7 @@ class NonCachingLazyStorage<K, V>(
     }
 
     override fun append(key: K, value: V) {
-        getStorageOrCreateNew().appendData(key) { dataOutput -> valueExternalizer.save(dataOutput, value) }
+        getStorageOrCreateNew().appendData(key, PersistentHashMap.ValueDataAppender { dataOutput -> valueExternalizer.save(dataOutput, value) })
     }
 
     @Synchronized
