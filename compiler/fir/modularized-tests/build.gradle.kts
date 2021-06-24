@@ -20,7 +20,7 @@ dependencies {
     }
 
     testCompileOnly(intellijDep()) {
-        includeJars("extensions", "idea_rt", "util", "asm-all", "platform-util-ex", "jna", rootProject = rootProject)
+        includeJars("idea_rt", "util", "asm-all", "platform-util-ex", "jna", rootProject = rootProject)
     }
 
     testCompileOnly(intellijPluginDep("java")) { includeJars("java-api") }

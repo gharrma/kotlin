@@ -32,7 +32,6 @@ dependencies {
     testCompile(intellijDep()) {
         includeJars(
             "jps-model",
-            "extensions",
             "util",
             "platform-api",
             "platform-impl",

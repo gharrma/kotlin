@@ -20,7 +20,6 @@ dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompile(project(":kotlin-scripting-jvm-host-unshaded"))
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
 }
 
 sourceSets {

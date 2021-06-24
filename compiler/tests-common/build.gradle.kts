@@ -77,7 +77,6 @@ dependencies {
     testCompile(intellijDep()) {
         includeJars(
             "jps-model",
-            "extensions",
             "util",
             "platform-api",
             "platform-impl",
@@ -95,8 +94,6 @@ dependencies {
         isTransitive = false
     }
 
-    testCompile(intellijDep()) { includeJars("platform-util-ui", "platform-concurrency", "platform-objectSerializer") }
-    testCompile(intellijDep()) { includeJars("platform-ide-util-io") }
     testApiJUnit5()
 }
 

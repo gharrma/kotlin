@@ -27,7 +27,6 @@ dependencies {
     testRuntimeOnly(intellijDep()) {
         includeJars(
             "jps-model",
-            "extensions",
             "util",
             "platform-api",
             "platform-impl",

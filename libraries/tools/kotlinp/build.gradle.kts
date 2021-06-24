@@ -30,7 +30,6 @@ dependencies {
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency", "platform-objectSerializer") }
 
     shadows(project(":kotlinx-metadata-jvm", configuration = "runtimeElements"))
     shadows("org.jetbrains.intellij.deps:asm-all:$kotlinpAsmVersion")

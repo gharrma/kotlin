@@ -11,8 +11,6 @@ dependencies {
     compile(project(":compiler:frontend.java"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    compileOnly(intellijDep()) { includeJars("platform-core-ui", "platform-util-ui") }
-
     compileOnly(intellijDep()) { includeJars("asm-all", "trove4j", "guava", rootProject = rootProject) }
 }
 

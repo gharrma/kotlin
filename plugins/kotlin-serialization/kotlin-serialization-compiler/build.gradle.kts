@@ -24,7 +24,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.1.0")
 
     testRuntimeOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
 }
 
 sourceSets {
